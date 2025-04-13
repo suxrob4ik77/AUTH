@@ -23,14 +23,14 @@ class LoginApi(APIView):
         token['is_admin'] = user.is_admin
         return Response(data=token, status=status.HTTP_200_OK)
 
-class TeacherCreateApi(APIView):
-    @swagger_auto_schema(request_body=TeacherSerializer)
-    def post(self, request):
-        serializer = TeacherSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"status": True, "detail": "Teacher created"})
-        return Response({"status": False, "errors": serializer.errors}, status=400)
+# class TeacherCreateApi(APIView):
+#     @swagger_auto_schema(request_body=TeacherSerializer)
+#     def post(self, request):
+#         serializer = TeacherSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response({"status": True, "detail": "Teacher created"})
+#         return Response({"status": False, "errors": serializer.errors}, status=400)
 
 class PhoneSendOTP(APIView):
     @swagger_auto_schema(request_body=SMSSerializer)
