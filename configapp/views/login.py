@@ -1,18 +1,19 @@
 from django.contrib.auth.hashers import make_password
 from django.core.cache import cache
 from drf_yasg.utils import swagger_auto_schema
-
-from rest_framework import status
+from rest_framework.views import APIView
+from django.shortcuts import render
+from rest_framework import status, permissions
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.shortcuts import get_object_or_404
 from ..make_token import *
 from ..serializers import *
 import random
 
 class LoginApi(APIView):
     permission_classes = [AllowAny, ]
-
     @swagger_auto_schema(request_body=LoginSerializer)
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
@@ -23,14 +24,6 @@ class LoginApi(APIView):
         token['is_admin'] = user.is_admin
         return Response(data=token, status=status.HTTP_200_OK)
 
-# class TeacherCreateApi(APIView):
-#     @swagger_auto_schema(request_body=TeacherSerializer)
-#     def post(self, request):
-#         serializer = TeacherSerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response({"status": True, "detail": "Teacher created"})
-#         return Response({"status": False, "errors": serializer.errors}, status=400)
 
 class PhoneSendOTP(APIView):
     @swagger_auto_schema(request_body=SMSSerializer)
@@ -98,3 +91,34 @@ class RegisterUserApi(APIView):
         serializer = UserSerializer(users, many=True)
         return Response(data=serializer.data)
 
+# USER Update and Delete
+class UserDetailView(APIView):
+    def get_object(self, pk):
+        return get_object_or_404(User, pk=pk)
+
+    @swagger_auto_schema(request_body=UserSerializer)
+    def put(self, request, pk):
+        user = self.get_object(pk)
+        serializer = UserSerializer(user, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        user = self.get_object(pk)
+        user.delete()
+        return Response({"detail": "Deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+
+
+
+# class ChangePasswordView(APIView):
+#     permission_classes = (permissions.IsAuthenticated)
+#
+#     @swagger_auto_schema(request_body=ChangePasswordSerializer)
+#     def patch(self, request, *args, **kwargs):
+#         serializer = ChangePasswordSerializer(instance=self.request.user, data=request.data)
+#         if serializer.is_valid(raise_exception=True):
+#             serializer.save()
+#             return Response(serializer.data, status=status.HTTP_200_OK)
+#         return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
