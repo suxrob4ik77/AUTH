@@ -1,53 +1,56 @@
 from django.db import models
-from ..models import *
 from .auth_users import *
-
-class Day(BaseModel):
-    title=models.CharField(max_length=50)
-    descriptions=models.CharField(max_length=500,null=True,blank=True)
-
-    def __str__(self):
-        return self.title
+from .model_teacher import *
 
 
-class Rooms(BaseModel):
-    title=models.CharField(max_length=50)
-    descriptions=models.CharField(max_length=500,null=True,blank=True)
+class Rooms(models.Model):
+    title = models.CharField(max_length=50)
+    descriptions = models.CharField(max_length=500, blank=True, null=True)
 
     def __str__(self):
         return self.title
-
 
 class TableType(BaseModel):
     title = models.CharField(max_length=50)
-    descriptions = models.CharField(max_length=500, null=True, blank=True)
+    descriptions = models.CharField(max_length=500, blank=True, null=True)
 
     def __str__(self):
         return self.title
 
-class TableStudent(BaseModel):
-    start_time=models.TimeField()
+class Table(BaseModel):
+    start_time = models.TimeField()
     end_time = models.TimeField()
-    room=models.ForeignKey(Rooms,on_delete=models.RESTRICT)
-    type=models.ForeignKey(TableType,on_delete=models.RESTRICT)
-    descriptions = models.CharField(max_length=500, null=True, blank=True)
+    room = models.ForeignKey(Rooms, on_delete=models.RESTRICT)
+    type = models.ForeignKey(TableType, on_delete=models.RESTRICT)
+    descriptions = models.CharField(max_length=500, blank=True, null=True)
 
     def __str__(self):
         return self.start_time.__str__()+" "+self.end_time.__str__()
 
 
 class GroupStudent(BaseModel):
-    title=models.CharField(max_length=50,unique=True)
+    title = models.CharField(max_length=50, unique=True)
     course = models.ForeignKey(Course, on_delete=models.RESTRICT)
-    teacher=models.ManyToManyField(Teacher,related_name='teacher')
-    table=models.ForeignKey(TableStudent,on_delete=models.RESTRICT)
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
-    discriptions = models.CharField(max_length=500, null=True, blank=True)
-    start_time=models.TimeField()
-    end_time = models.TimeField()
+    teacher = models.ManyToManyField(Teacher, related_name='get_teacher')
+    table = models.ForeignKey(Table, on_delete=models.RESTRICT)
+    start_date = models.DateField()
+    end_date = models.DateField(null=True, blank=True)  # <- to'g'rilangan qator
+    descriptions = models.CharField(max_length=500, blank=True, null=True)
 
     def __str__(self):
         return self.title
 
 
+
+
+# class GroupStudent(BaseModel):
+#     title = models.CharField(max_length=50, unique=True)
+#     course = models.ForeignKey(Course, on_delete=models.RESTRICT)
+#     teacher = models.ManyToManyField(Teacher, related_name='get_teacher')
+#     table = models.ForeignKey(Table, on_delete=models.RESTRICT)
+#     start_date = models.DateField()
+#     end_date = models.DateField()
+#     descriptions = models.CharField(max_length=500, blank=True, null=True)
+#
+#     def __str__(self):
+#         return self.title

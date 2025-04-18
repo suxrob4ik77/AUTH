@@ -2,7 +2,7 @@ from rest_framework import serializers
 from . import UserSerializer
 from ..models import *
 
-class GroupSerializer(serializers.ModelSerializer):
+class GroupStudentSerializer(serializers.ModelSerializer):
     class Meta:
         model = GroupStudent
         fields = ['id', 'title', 'course', 'teacher', 'table', 'start_date', 'end_date', 'descriptions']
@@ -21,9 +21,4 @@ class TableTypeSerializer(serializers.ModelSerializer):
 class RoomsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Rooms
-        fields = ['id', 'title', 'descriptions']
-
-class DaySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Day
         fields = ['id', 'title', 'descriptions']

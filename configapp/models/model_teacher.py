@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models    
 from .auth_users import *
 
 # Fanlar
